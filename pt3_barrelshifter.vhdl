@@ -9,6 +9,7 @@ use ieee.numeric_std.all;
 
 entity ENCRYP2 is
     port(
+        DIRECTION     : in  std_logic;
         ASCII         : in  std_logic_vector(7 downto 0);
         KEY           : in  std_logic_vector(7 downto 0);
         ENC_MESSAGE   : out std_logic_vector(7 downto 0);
@@ -17,7 +18,7 @@ entity ENCRYP2 is
         FIVEBIT_CHECK : out std_logic;
         GREEN_LED     : out std_logic;
         RED_LED       : out std_logic
-    );  
+    );
 end entity ENCRYP2;
 
 architecture BEHAV of ENCRYP2 is
@@ -25,10 +26,26 @@ architecture BEHAV of ENCRYP2 is
     signal ENC_MESSAGE_REG   : std_logic_vector(7 downto 0);
     signal MSB_CHECK_REG     : std_logic_vector(7 downto 0);
     signal FIVEBIT_CHECK_REG : std_logic;
-    signal MESSAGE : std_logic_vector(7 downto 0);
-
+    signal MESSAGE           : std_logic_vector(7 downto 0);
+    signal SHIFT_AMOUNT : std_logic_vector(2 downto 0);
 
 begin
+    ----------------------------------barrel shifter----------------------------------------
+    shifter : process(DIRECTION)
+
+    begin
+
+    SHIFT_AMOUNT(2) <= ASCII(2);
+    SHIFT_AMOUNT(1) <= ASCII(1);
+    SHIFT_AMOUNT(0) <= ASCII(0);
+    
+    if direction = '1' then
+    
+    else
+
+    end if;
+    end process shifter;
+
 
     ----------------------------------pt2. comparator----------------------------------------
 
@@ -62,13 +79,13 @@ begin
     rgb : process(FIVEBIT_CHECK_REG, MSB_CHECK_REG, ASCII)
     begin
         if FIVEBIT_CHECK_REG = '1' and MSB_CHECK_REG = "11111111" then
-            GREEN_LED   <= '1';
-            RED_LED     <= '0';
-            MESSAGE <= ASCII;
+            GREEN_LED <= '1';
+            RED_LED   <= '0';
+            MESSAGE   <= ASCII;
         else
-            GREEN_LED   <= '0';
-            RED_LED     <= '1';
-            MESSAGE <= "00000000";
+            GREEN_LED <= '0';
+            RED_LED   <= '1';
+            MESSAGE   <= "00000000";
         end if;
     end process;
 
