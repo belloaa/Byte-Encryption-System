@@ -16,13 +16,14 @@ architecture BEHAV of ENCRYP is
     signal ENC_MESSAGE_REG : std_logic_vector(7 downto 0);
     
 begin
-    
+    -- xor for encryption w/ key
     encoding : process(MESSAGE, KEY, ENC_MESSAGE_REG)
     begin
             ENC_MESSAGE_REG <= (MESSAGE xor KEY);
             ENC_MESSAGE <= ENC_MESSAGE_REG;
     end process encoding;
-
+    
+    -- xor again for decryption
     decoding : process(ENC_MESSAGE_REG, KEY)
     begin
         DEC_MESSAGE <= (ENC_MESSAGE_REG xor KEY);

@@ -7,7 +7,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity ENCRYP2 is
+entity ENCRYP3 is
     port(
         DIRECTION     : in  std_logic;
         ASCII         : in  std_logic_vector(7 downto 0);
@@ -19,33 +19,40 @@ entity ENCRYP2 is
         GREEN_LED     : out std_logic;
         RED_LED       : out std_logic
     );
-end entity ENCRYP2;
+end entity ENCRYP3;
 
-architecture BEHAV of ENCRYP2 is
+architecture BEHAV of ENCRYP3 is
 
-    signal ENC_MESSAGE_REG   : std_logic_vector(7 downto 0);
-    signal MSB_CHECK_REG     : std_logic_vector(7 downto 0);
-    signal FIVEBIT_CHECK_REG : std_logic;
-    signal MESSAGE           : std_logic_vector(7 downto 0);
-    signal SHIFT_AMOUNT : std_logic_vector(2 downto 0);
+    signal ENC_MESSAGE_REG   : std_logic_vector(7 downto 0); --register used for storing encoded message data
+    signal MSB_CHECK_REG     : std_logic_vector(7 downto 0); --register for storing result of 3 msb checking
+    signal FIVEBIT_CHECK_REG : std_logic; -- register for storing result of 3 lsb checking
+    signal MESSAGE           : std_logic_vector(7 downto 0) := (others => '0'); -- signal used for manipulating ascii input data
+    signal SHIFT_AMOUNT      : std_logic_vector(2 downto 0); 
+    signal ENC_ROT           : std_logic_vector(7 downto 0); -- stores rotated message that has yet to be encoded (kind of confusing change later)
+    signal DEC_ROT           : std_logic_vector(7 downto 0); -- stores the decoded message (but still rotated)
 
 begin
-    ----------------------------------barrel shifter----------------------------------------
-    shifter : process(DIRECTION)
+    ----------------------------------pt3. barrel shifter----------------------------------------
 
-    begin
+    -- direct instantiation for the barrel shifter rotating muxs
+    -- rotator mux in barrel_mux.vhdl
+    encode_mux : entity work.barrel_mux
+        port map(
+            SHIFT_AMOUNT => SHIFT_AMOUNT,
+            INPUT        => MESSAGE,
+            DIRECTION    => DIRECTION,
+            OUTPUT       => ENC_ROT
+        );
 
-    SHIFT_AMOUNT(2) <= ASCII(2);
-    SHIFT_AMOUNT(1) <= ASCII(1);
-    SHIFT_AMOUNT(0) <= ASCII(0);
-    
-    if direction = '1' then
-    
-    else
+    decode_mux : entity work.barrel_mux
+        port map(
+            SHIFT_AMOUNT => SHIFT_AMOUNT,
+            INPUT        => DEC_ROT,
+            DIRECTION    => not DIRECTION,
+            OUTPUT       => DEC_MESSAGE
+        );
 
-    end if;
-    end process shifter;
-
+    SHIFT_AMOUNT <= KEY(2 downto 0);
 
     ----------------------------------pt2. comparator----------------------------------------
 
@@ -71,11 +78,12 @@ begin
         D := ASCII(1);
         E := ASCII(0);
 
+        -- boolean expression from kmap addressing only capital ASCII alphabet characters
         FIVEBIT_CHECK_REG <= ((A or B or C or D or E) and (not A or not B or not D or not E) and (not A or not B or not C));
         FIVEBIT_CHECK     <= FIVEBIT_CHECK_REG;
     end process fivebit;
 
-    -- led check
+    -- led check, assign this output to a constraint?
     rgb : process(FIVEBIT_CHECK_REG, MSB_CHECK_REG, ASCII)
     begin
         if FIVEBIT_CHECK_REG = '1' and MSB_CHECK_REG = "11111111" then
@@ -91,17 +99,17 @@ begin
 
     ----------------------------------pt.1 xor encrption and decryption----------------------------------------
 
-    -- encryption
-    encoding : process(MESSAGE, KEY, ENC_MESSAGE_REG)
+    -- xor for encryption w/ key
+    encoding : process(ENC_ROT, KEY, ENC_MESSAGE_REG)
     begin
-        ENC_MESSAGE_REG <= (MESSAGE xor KEY);
+        ENC_MESSAGE_REG <= (ENC_ROT xor KEY);
         ENC_MESSAGE     <= ENC_MESSAGE_REG;
     end process encoding;
 
-    -- decryption
+    -- xor again for decryption
     decoding : process(ENC_MESSAGE_REG, KEY)
     begin
-        DEC_MESSAGE <= (ENC_MESSAGE_REG xor KEY);
+        DEC_ROT <= (ENC_MESSAGE_REG xor KEY);
     end process decoding;
 
 end architecture BEHAV;

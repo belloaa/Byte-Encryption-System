@@ -52,13 +52,14 @@ begin
         B := ASCII(3);
         C := ASCII(2);
         D := ASCII(1);
-        E := ASCII(0);
-
+        E := ASCII(0);  
+        
+        -- boolean expression from kmap addressing only capital ASCII alphabet characters
         FIVEBIT_CHECK_REG <= ((A or B or C or D or E) and (not A or not B or not D or not E) and (not A or not B or not C));
         FIVEBIT_CHECK     <= FIVEBIT_CHECK_REG;
     end process fivebit;
 
-    -- led check
+    -- led check, assign this output to a constraint?
     rgb : process(FIVEBIT_CHECK_REG, MSB_CHECK_REG, ASCII)
     begin
         if FIVEBIT_CHECK_REG = '1' and MSB_CHECK_REG = "11111111" then
@@ -74,14 +75,14 @@ begin
 
     ----------------------------------pt.1 xor encrption and decryption----------------------------------------
 
-    -- encryption
+    -- xor for encryption w/ key
     encoding : process(MESSAGE, KEY, ENC_MESSAGE_REG)
     begin
         ENC_MESSAGE_REG <= (MESSAGE xor KEY);
         ENC_MESSAGE     <= ENC_MESSAGE_REG;
     end process encoding;
 
-    -- decryption
+    -- xor again for decryption
     decoding : process(ENC_MESSAGE_REG, KEY)
     begin
         DEC_MESSAGE <= (ENC_MESSAGE_REG xor KEY);

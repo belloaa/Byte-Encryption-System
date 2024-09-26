@@ -2,13 +2,14 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity T_ENCRYP2 is
-end T_ENCRYP2;
+entity T_ENCRYP3 is
+end T_ENCRYP3;
 
-architecture TEST of T_ENCRYP2 is
+architecture TEST of T_ENCRYP3 is
 
-    component ENCRYP2
+    component ENCRYP3
         port(
+            DIRECTION     : in  std_logic;
             ASCII         : in  std_logic_vector(7 downto 0);
             KEY           : in  std_logic_vector(7 downto 0);
             ENC_MESSAGE   : out std_logic_vector(7 downto 0);
@@ -18,8 +19,9 @@ architecture TEST of T_ENCRYP2 is
             GREEN_LED     : out std_logic;
             RED_LED       : out std_logic
         );
-    end component ENCRYP2;
+    end component ENCRYP3;
 
+    signal DIRECTION     : std_logic;
     signal ASCII         : std_logic_vector(7 downto 0);
     signal ASCII_REG     : unsigned(7 downto 0);
     signal KEY           : std_logic_vector(7 downto 0);
@@ -31,8 +33,9 @@ architecture TEST of T_ENCRYP2 is
     signal FIVEBIT_CHECK : std_logic;
 
 begin
-    UUT : ENCRYP2
+    UUT : ENCRYP3
         port map(
+            DIRECTION     => DIRECTION,
             ASCII         => ASCII,
             KEY           => KEY,
             ENC_MESSAGE   => ENC_MESSAGE,
@@ -45,13 +48,16 @@ begin
 
     process
     begin
-        KEY       <= "00010110";
+        KEY       <= "00010001";
         ASCII_REG <= "01000000";
+        
         -- waiting for a little so it doesn't check the validation right away
         wait for 10 ns;
         for i in 0 to 30 loop
             -- cycling through all of the values of capital ASCII alphabet
             -- checking range from 01000000
+            wait for 5 ns;
+            DIRECTION <= '1';
 
             wait for 5 ns;
             assert MSB_CHECK = "11111111"
@@ -84,7 +90,6 @@ begin
             severity error;
 
             wait for 5 ns;
-
             --adding to the unsigned signal to loop through the values
             ASCII_REG <= ASCII_REG + 1;
             ASCII     <= std_logic_vector(ASCII_REG);
