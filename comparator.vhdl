@@ -38,7 +38,7 @@ begin
         
     end process comp;
     
-    flip_led : process(FIVEBIT_CHECK, THREEBIT_CHECK)
+    flip_led : process(FIVEBIT_CHECK, THREEBIT_CHECK, MESSAGE)
         begin
         
         if (FIVEBIT_CHECK = '1' and THREEBIT_CHECK = '1') then
