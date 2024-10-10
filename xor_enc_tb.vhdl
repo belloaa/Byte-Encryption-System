@@ -36,7 +36,7 @@ begin
 
             -- validating encryption and decryption
             assert OUT_MESSAGE_TB = (MESSAGE_TB xor KEY_TB)
-            report "Encrpytion/Decryption incorrect"
+            report "Encryption/Decryption incorrect"
             severity error;
 
             -- cycling through all of the values of an 8bit vector
