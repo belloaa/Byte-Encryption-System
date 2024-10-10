@@ -38,12 +38,12 @@ begin
             
             wait for 5 ns;
             assert GREEN_LED_TB = '1'
-            report "Invalid Character: "
+            report "Invalid Character"
             severity error;
 
             wait for 5 ns;
             assert RED_LED_TB = '1'
-            report "Valid Character: "
+            report "Valid Character"
             severity error;
             
             -- cycling through all of the values of an 8bit vector
