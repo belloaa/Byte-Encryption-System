@@ -36,6 +36,7 @@ begin
         wait for 10 ns;
         for i in 0 to 30 loop
             
+            -- assertions for the LED circuit
             wait for 5 ns;
             assert GREEN_LED_TB = '1'
             report "Invalid Character"

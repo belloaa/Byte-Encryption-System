@@ -24,6 +24,11 @@ architecture BEHAV of system_barrel is
 
 begin
     
+    --intializing signals, rev direction for decrypting
+    REV_DIRECTION <= not DIRECTION;
+    -- taking the last 3 bits for the shift amount
+    SHIFT_AMOUNT <= KEY(2 downto 0);
+
     comparator : entity work.comparator
         port map(
             MESSAGE     => MESSAGE,
@@ -31,9 +36,7 @@ begin
             RED_LED     => RED_LED,
             GREEN_LED   => GREEN_LED
         );
-
-    SHIFT_AMOUNT <= KEY(2 downto 0);
-
+    
     barrelshift1 : entity work.barrel_mux
         port map(
             SHIFT_AMOUNT => SHIFT_AMOUNT,
@@ -55,8 +58,6 @@ begin
             KEY         => KEY,
             OUT_MESSAGE => DEC_MESSAGE
         );
-    
-    REV_DIRECTION <= not DIRECTION;
 
     barrelshift2 : entity work.barrel_mux
         port map(

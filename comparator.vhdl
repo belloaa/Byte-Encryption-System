@@ -41,11 +41,13 @@ begin
     flip_led : process(FIVEBIT_CHECK, THREEBIT_CHECK, MESSAGE)
         begin
         
+        -- LED circuit output logic, green LED if all the checks go well
         if (FIVEBIT_CHECK = '1' and THREEBIT_CHECK = '1') then
             GREEN_LED <= '1';
             RED_LED <= '0';
             OUT_MESSAGE <= MESSAGE;
         else
+            -- red LED on if checks fail, output message is set to 0
             GREEN_LED <= '0';
             RED_LED <= '1';
             OUT_MESSAGE <= (others=>'0');

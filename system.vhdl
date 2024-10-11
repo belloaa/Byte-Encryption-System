@@ -23,7 +23,9 @@ architecture BEHAV of ENCRYP is
     signal REV_DIRECTION : std_logic;
 
 begin
+     -- taking the last 3 bits for the shift amount
     SHIFT_AMOUNT <= KEY(2 downto 0);
+    --rev direction for decrypting
     REV_DIRECTION <= not DIRECTION;
 
     comparator : entity work.comparator
