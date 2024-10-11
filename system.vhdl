@@ -20,9 +20,12 @@ architecture BEHAV of ENCRYP is
     signal UNROT_MESSAGE : std_logic_vector(7 downto 0);
     signal ENC_MESSAGE   : std_logic_vector(7 downto 0);
     signal DEC_MESSAGE   : std_logic_vector(7 downto 0);
+    signal REV_DIRECTION : std_logic;
 
 begin
-    
+    SHIFT_AMOUNT <= KEY(2 downto 0);
+    REV_DIRECTION <= not DIRECTION;
+
     comparator : entity work.comparator
         port map(
             MESSAGE     => MESSAGE,
@@ -30,8 +33,6 @@ begin
             RED_LED     => RED_LED,
             GREEN_LED   => GREEN_LED
         );
-
-    SHIFT_AMOUNT <= KEY(2 downto 0);
 
     barrelshift1 : entity work.barrel_mux
         port map(
@@ -54,12 +55,12 @@ begin
             KEY         => KEY,
             OUT_MESSAGE => DEC_MESSAGE
         );
-
+    
     barrelshift2 : entity work.barrel_mux
         port map(
             SHIFT_AMOUNT => SHIFT_AMOUNT,
             MESSAGE      => DEC_MESSAGE,
-            DIRECTION    => not DIRECTION,
+            DIRECTION    => REV_DIRECTION,
             OUT_MESSAGE  => UNROT_MESSAGE
         );
 

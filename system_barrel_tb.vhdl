@@ -2,12 +2,12 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity T_ENCRYP is
-end T_ENCRYP;
+entity T_system_barrel is
+end T_system_barrel;
 
-architecture TEST of T_ENCRYP is
+architecture TEST of T_system_barrel is
 
-    component ENCRYP
+    component system_barrel
         port(
             MESSAGE     : in  std_logic_vector(7 downto 0);
             KEY         : in  std_logic_vector(7 downto 0);
@@ -16,7 +16,7 @@ architecture TEST of T_ENCRYP is
             GREEN_LED   : out std_logic;
             OUT_MESSAGE : out std_logic_vector(7 downto 0)
         );
-    end component ENCRYP;
+    end component system_barrel;
 
     signal DIRECTION     : std_logic;
     signal MESSAGE       : std_logic_vector(7 downto 0);
@@ -27,7 +27,7 @@ architecture TEST of T_ENCRYP is
     signal GREEN_LED     : std_logic;
 
 begin
-    UUT : ENCRYP
+    UUT : system_barrel
         port map(
             DIRECTION     => DIRECTION,
             MESSAGE       => MESSAGE,
@@ -40,18 +40,18 @@ begin
     process
     begin
         KEY       <= "00010001";   
-        MESSAGE_REG <= "01000000"; -- Start before 'A' in ASCII
+        MESSAGE_REG <= "01000001"; -- Start at 'A' in ASCII
         DIRECTION <= '1';
 
         -- Wait to start the test
         wait for 10 ns;
 
         -- Loop through the ASCII uppercase letters
-        for i in 0 to 31 loop
+        for i in 0 to 25 loop
             -- Assign MESSAGE from ASCII_REG
             MESSAGE <= std_logic_vector(MESSAGE_REG);
-            
             wait for 5 ns;
+
             -- Check the GREEN_LED (valid input) and RED_LED (invalid input)
             if MESSAGE >= "01000000" and MESSAGE <= "01011010" then
                 assert (GREEN_LED = '1' and RED_LED = '0')
@@ -62,6 +62,13 @@ begin
                 report "Invalid character check failed at: " & integer'image(i)
                 severity error;
             end if;
+
+            
+            wait for 5 ns;
+            -- Assertions for decryption (should retrieve the original MESSAGE)
+            assert (OUT_MESSAGE = MESSAGE)
+            report "Decryption failed at character: " & integer'image(i)
+            severity error;
 
             wait for 5 ns;
 
