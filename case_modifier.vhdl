@@ -13,7 +13,7 @@ architecture BEHAV of case_modifier is
 begin
   process(MESSAGE)
   begin
-    -- changing the case of 
+    -- changing the case of the character by inverting one bit
     if MESSAGE /= "00000000" then
       OUT_MESSAGE <= MESSAGE(7 downto 6) & not MESSAGE(5) & MESSAGE(4 downto 0);
     else
