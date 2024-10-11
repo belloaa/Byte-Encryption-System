@@ -1,3 +1,14 @@
+------------------------------------------------------------------------
+-- University  : University of Alberta
+-- Course      : ECE 410: Advanced Digital Logic Design
+-- Project     : Byte Encryption System
+-- Authors     : Abdul Bello, Alastair Cottier
+-- Students ID : 1664803, 1668621
+-- Date        : 10/11/2024
+------------------------------------------------------------------------
+-- Description : Encryption-decryption system that processes an 8-bit message.
+------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
